@@ -1,22 +1,26 @@
-pipeline {
-    agent any
-    
-    environment {
-        AWS_ACCESS_KEY_ID     = credentials('0e24636c-7186-414a-8eef-cfae1f896be0')
-        AWS_SECRET_ACCESS_KEY = credentials('2758b467-c38b-43b0-b802-af5ec8130d58')
-    }
-    
-    stages {
-        stage('fetch_latest_code') {
-            steps {
-                git branch: 'master', url: 'https://github.com/rchitluri/Jenkins-Terraform.git'
-            }
-        }
-      
-        stage('Submit Stack') {
-            steps {
-                sh "aws cloudformation create-stack --stack-name jenkins-cloudformation --template-body file://ec2.yaml"
-            }
-        }
-    }
-}
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create an EC2 instance and output its public IP address
+
+Resources:
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0ed90a3b5bde5e371 # Specify your desired Amazon Machine Image (AMI) ID
+      InstanceType: t2.micro  # Specify your desired instance type
+      KeyName: Practice_KP # Specify the key pair to use for SSH access
+      SecurityGroups:
+        - Ref: mySecurityGroup  # Reference to the security group
+      AvailabilityZone: ca-central-1a
+      Tags:
+         - Key: Name
+           Value: MyEC2InstanceName     
+
+  mySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0  # Open SSH access to all IP addresses (for demo purposes)
