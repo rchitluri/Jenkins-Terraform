@@ -1,0 +1,22 @@
+pipeline {
+    agent any
+    
+    environment {
+        AWS_ACCESS_KEY_ID     = credentials('0e24636c-7186-414a-8eef-cfae1f896be0')
+        AWS_SECRET_ACCESS_KEY = credentials('2758b467-c38b-43b0-b802-af5ec8130d58')
+    }
+    
+    stages {
+        stage('fetch_latest_code') {
+            steps {
+                git branch: 'master', url: 'https://github.com/rchitluri/Jenkins-Terraform.git'
+            }
+        }
+      
+        stage('Submit Stack') {
+            steps {
+                sh "aws cloudformation create-stack --stack-name jenkins-cloudformation --template-body file://ec2.yaml"
+            }
+        }
+    }
+}
