@@ -13,7 +13,7 @@ Resources:
       AvailabilityZone: ca-central-1a
       Tags:
          - Key: Name
-           Value: MyEC2InstanceName     
+           Value: JenkinsInstanceName     
 
   mySecurityGroup:
     Type: AWS::EC2::SecurityGroup
